@@ -196,6 +196,8 @@ const App: React.FC = () => {
         return [];
     });
 
+    const [isOtherGamesOpened, setIsOtherGamesOpened] = useState(false);
+
     const handleChangeStory = (storyId: string) => {
         const foundedStory = otherStories.find(story => story.chatId === storyId);
 
@@ -210,6 +212,8 @@ const App: React.FC = () => {
                 });
             }
         }
+
+        setIsOtherGamesOpened(false);
     }
 
     return (
@@ -217,6 +221,26 @@ const App: React.FC = () => {
             <S.globalStyles />
             <S.BackgroundImage src={BgImage} />
             <S.App>
+                {
+                    isOtherGamesOpened && (
+                        <S.CloseOtherGamesBackground onClick={() => setIsOtherGamesOpened(false)} />
+                    )
+                }
+                <S.OtherGamesButtonWrapper>
+                    <S.Button onClick={() => setIsOtherGamesOpened(true)}>G</S.Button>
+                    {
+                        isOtherGamesOpened && (
+                            <S.OtherStories>
+                                сохраненые игры
+                                {
+                                    otherStories.map(story =>
+                                        <S.Button key={story.chatId} disabled={chatName === story.chatId} onClick={() => handleChangeStory(story.chatId)}>{story.chatId}</S.Button>
+                                    )
+                                }
+                            </S.OtherStories>
+                        )
+                    }
+                </S.OtherGamesButtonWrapper>
                 <S.StoryGroup>
                     {
                         messages.length === 0
@@ -263,15 +287,6 @@ const App: React.FC = () => {
                             </S.Story>
                     }
                 </S.StoryGroup>
-
-                <S.OtherStories>
-                    сохраненые игры
-                    {
-                        otherStories.map(story =>
-                            <S.Button key={story.chatId} disabled={chatName === story.chatId} onClick={() => handleChangeStory(story.chatId)}>{story.chatId}</S.Button>
-                        )
-                    }
-                </S.OtherStories>
             </S.App>
         </>
     );
