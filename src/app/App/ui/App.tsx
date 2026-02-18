@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { STORIES_STORAGE_KEY } from '../constants';
 import { useChatMutation } from '../model';
 import * as S from './App.styles';
+import { BgImage } from '../assets';
 
 const baseRules = `
     Давай сыграем в рпг квест в сеттинге зомбоапокалипсиса.
@@ -212,55 +213,67 @@ const App: React.FC = () => {
     }
 
     return (
-        <S.App>
-            <S.StoryGroup>
-                {
-                    messages.length === 0
-                        ? <div>
-                            <h1>настройка</h1>
-                            <S.Input placeholder='имя' value={playerName} onChange={(event) => setPlayerName(event.currentTarget.value)} />
-                            <S.Input placeholder='возраст' value={playerAge} onChange={(event) => setPlayerAge(event.currentTarget.value)} />
-                            <S.Input placeholder='пол' value={playerSex} onChange={(event) => setPlayerSex(event.currentTarget.value)} />
-                            <S.Input placeholder='стартовая локация' value={playerStartLocation} onChange={(event) => setPlayerStartLocation(event.currentTarget.value)} />
-                            <S.Input placeholder='время с начала апокалипсиса' value={playerPastDays} onChange={(event) => setPlayerPastDays(event.currentTarget.value)} />
-                            <S.Button
-                                onClick={handleStartGame}
-                                disabled={!playerName || !playerAge || !playerSex || !playerStartLocation || !playerPastDays}>
-                                начать
-                            </S.Button>
-                        </div>
-                        : <div>
-                            {
-                                messages.slice(1).map(message => <p>
-                                    {message.role === 'assistant' ? message.content?.toString().split(ACTIONS_GROUP_SEPARATOR)?.[0] || 'ИИ не прислал действия' : message.content?.toString()}
-                                </p>)
-                            }
+        <>
+            <S.globalStyles />
+            <S.BackgroundImage src={BgImage} />
+            <S.App>
+                <S.StoryGroup>
+                    {
+                        messages.length === 0
+                            ? <S.PlayerSetting>
+                                <h1>настройка</h1>
+                                <S.Input placeholder='имя' value={playerName} onChange={(event) => setPlayerName(event.currentTarget.value)} />
+                                <S.Input placeholder='возраст' value={playerAge} onChange={(event) => setPlayerAge(event.currentTarget.value)} />
+                                <S.Input placeholder='пол' value={playerSex} onChange={(event) => setPlayerSex(event.currentTarget.value)} />
+                                <S.Input placeholder='стартовая локация' value={playerStartLocation} onChange={(event) => setPlayerStartLocation(event.currentTarget.value)} />
+                                <S.Input placeholder='время с начала апокалипсиса' value={playerPastDays} onChange={(event) => setPlayerPastDays(event.currentTarget.value)} />
+                                <S.Button
+                                    onClick={handleStartGame}
+                                    disabled={!playerName || !playerAge || !playerSex || !playerStartLocation || !playerPastDays}>
+                                    начать
+                                </S.Button>
+                            </S.PlayerSetting>
+                            : <S.Story>
+                                <S.StoryMessages>
+                                    {
+                                        messages.slice(1).map(message => <p>
+                                            {
+                                                message.role === 'assistant'
+                                                    ? message.content?.toString().split(ACTIONS_GROUP_SEPARATOR)?.[0] || 'ИИ не прислал действия'
+                                                    : <S.Button disabled>{message.content?.toString()}</S.Button>
+                                            }
+                                        </p>)
+                                    }
+                                </S.StoryMessages>
 
-                            {
-                                isPending && <p>Загружаюся...</p>
-                            }
+                                {
+                                    isPending && <p>Загружаюся...</p>
+                                }
 
-                            {
-                                messages[messages.length - 1].role === 'assistant'
-                                    ? messages[messages.length - 1].content?.toString()?.split(ACTIONS_GROUP_SEPARATOR)?.length === 2
-                                        ? messages[messages.length - 1].content?.toString()?.split(ACTIONS_GROUP_SEPARATOR)?.[1].split(ACTIONS_SEPARATOR)?.filter(Boolean)
-                                            .map(action => <S.Button onClick={() => handleSubmit(action)}>{action}</S.Button>)
-                                        : <b>ИИ не прислал действия</b>
-                                    : null
-                            }
-                        </div>
-                }
-            </S.StoryGroup>
+                                <S.Actions>
+                                    {
+                                        messages[messages.length - 1].role === 'assistant'
+                                            ? messages[messages.length - 1].content?.toString()?.split(ACTIONS_GROUP_SEPARATOR)?.length === 2
+                                                ? messages[messages.length - 1].content?.toString()?.split(ACTIONS_GROUP_SEPARATOR)?.[1].split(ACTIONS_SEPARATOR)?.filter(Boolean)
+                                                    .map(action => <S.Button onClick={() => handleSubmit(action)}>{action}</S.Button>)
+                                                : <b>ИИ не прислал действия</b>
+                                            : null
+                                    }
+                                </S.Actions>
+                            </S.Story>
+                    }
+                </S.StoryGroup>
 
-            <S.OtherStories>
-                сохраненые игры
-                {
-                    otherStories.map(story =>
-                        <S.Button key={story.chatId} disabled={chatName === story.chatId} onClick={() => handleChangeStory(story.chatId)}>{story.chatId}</S.Button>
-                    )
-                }
-            </S.OtherStories>
-        </S.App>
+                <S.OtherStories>
+                    сохраненые игры
+                    {
+                        otherStories.map(story =>
+                            <S.Button key={story.chatId} disabled={chatName === story.chatId} onClick={() => handleChangeStory(story.chatId)}>{story.chatId}</S.Button>
+                        )
+                    }
+                </S.OtherStories>
+            </S.App>
+        </>
     );
 };
 
