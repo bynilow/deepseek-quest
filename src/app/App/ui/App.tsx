@@ -1,6 +1,6 @@
 import { useOpenAI } from '@/context';
 import type { ChatMessage, StoredChat } from '@/shared';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { STORIES_STORAGE_KEY } from '../constants';
 import { useChatMutation } from '../model';
 import * as S from './App.styles';
@@ -144,7 +144,7 @@ const App: React.FC = () => {
         saveChatToStorage(chatName, newMessages);
     }
 
-    const { mutate, isLoading, isSuccess, data } = useChatMutation(openai);
+    const { mutate, isPending, isSuccess, data } = useChatMutation(openai);
 
     useEffect(() => {
         if (isSuccess && data) {
@@ -237,7 +237,7 @@ const App: React.FC = () => {
                             }
 
                             {
-                                isLoading && <p>Загружаюся...</p>
+                                isPending && <p>Загружаюся...</p>
                             }
 
                             {

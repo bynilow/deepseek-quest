@@ -1,6 +1,6 @@
 import { ChatMessage } from "@/shared";
+import { useMutation, UseMutationOptions } from "@tanstack/react-query";
 import OpenAI from "openai";
-import { useMutation, UseMutationOptions } from "react-query";
 
 interface ChatMutationVariables {
     messages: ChatMessage[];

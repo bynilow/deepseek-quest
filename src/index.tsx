@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { OpenAIProvider } from './context';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { App } from './app/App/ui';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const queryClient = new QueryClient({
   defaultOptions: {
