@@ -53,66 +53,6 @@ const StoryGroup = styled.div`
     overflow: hidden;
 `;
 
-const OtherStories = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 16px;
-    z-index: 10;
-    position: absolute;
-    top: 32px;
-    right: 32px;
-    border: 1px solid #dfe0e045;
-    backdrop-filter: blur(5px);
-    border-radius: 16px;
-
-    button {
-        width: 100%;
-        white-space: nowrap;
-    }
-`;
-
-const Button = styled.button`
-    padding: 16px 32px;
-    background-color: #4141415a;
-    color: #dfe0e0;
-    font-size: 16px;
-    border-radius: 1000px;
-    outline: none;
-    border: 1px solid #dfe0e045;
-    backdrop-filter: blur(5px);
-    cursor: pointer;
-    font-weight: bold;
-    width: fit-content;
-
-    transition: 0.3s ease;
-
-    &:disabled {
-        background-color: #1b1d1e;
-        border: 1px solid #dfe0e014;
-        color: #a1a1a1;
-        cursor: default;
-    };
-`
-
-const Input = styled.input`
-    padding: 16px;
-    background-color: #4141415a;
-    color: #dfe0e0;
-    font-size: 16px;
-    border-radius: 1000px;
-    outline: none;
-    border: 1px solid #dfe0e045;
-    backdrop-filter: blur(5px);
-    font-weight: bold;
-`
-
-const PlayerSetting = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-`
-
 const Story = styled.div`
     display: flex;
     flex-direction: column;
@@ -140,23 +80,25 @@ const StoryMessages = styled.div`
     flex-direction: column;
     gap: 8px;
     overflow-y: auto;
+    width: 90%;
+
+    @media (max-width: 786px) {
+        width: 100%;
+    }
 `
 
-const OtherGamesButtonWrapper = styled.div`
-    position: fixed;
-    top: 0;
-    right: 0;
-    margin: 16px;
-    z-index: 10;
+const CharacterName = styled.span`
+    color: #c6f0ff;
+    font-weight: bold;
 `
 
-const CloseOtherGamesBackground = styled.div`
-    width: 100vw;
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 9;
-`
-
-export { App, StoryGroup, OtherStories, Button, Input, globalStyles, BackgroundImage, PlayerSetting, Story, Actions, StoryMessages, OtherGamesButtonWrapper, CloseOtherGamesBackground };
+export {
+    App,
+    StoryGroup,
+    globalStyles,
+    BackgroundImage,
+    Story,
+    Actions,
+    StoryMessages,
+    CharacterName
+};
