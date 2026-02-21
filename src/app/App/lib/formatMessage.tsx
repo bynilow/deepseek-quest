@@ -1,29 +1,64 @@
 import { Button, ChatMessage } from "@/shared";
-import { ACTIONS_GROUP_SEPARATOR, ACTIONS_SEPARATOR, NAME_SEPARATOR, NAME_TEXT_ANCHOR } from "../constants";
+import { ACTIONS_GROUP_SEPARATOR, ACTIONS_SEPARATOR, DELETED_ITEM_SEPARATOR, ITEMS_GROUP_SEPARATOR, NAME_SEPARATOR, NAME_TEXT_ANCHOR, RECEIVED_ITEM_SEPARATOR } from "../constants";
 import * as S from '../ui/App.styles';
+import { JSX } from "react";
 
 const formatMessages = (messages: ChatMessage[], handleSubmit: (action: string) => void) => {
     const story =
         messages.length
-            ? messages.slice(1).map(message => <p>
-                {
-                    message.role === 'assistant'
-                        ? message.content?.toString()
-                            .split(ACTIONS_GROUP_SEPARATOR)?.[0]
-                            .split(NAME_SEPARATOR)
-                            .map((sentence, index) => {
-                                if (sentence.charAt(0) === NAME_TEXT_ANCHOR) {
-                                    return <S.CharacterName key={sentence + index}>{sentence.slice(1)}</S.CharacterName>
-                                }
+            ? messages.slice(1).map(message => (
+                <div>
+                    <p>
+                        {/* Текст истории */}
+                        {
+                            message.role === 'assistant'
+                                ? message.content?.toString()
+                                    .split(ACTIONS_GROUP_SEPARATOR)?.[0]
+                                    .split(ITEMS_GROUP_SEPARATOR)[0]
+                                    .split(NAME_SEPARATOR)
+                                    .map((sentence, index) => {
+                                        if (sentence.charAt(0) === NAME_TEXT_ANCHOR) {
+                                            return <S.CharacterName key={sentence + index}>{sentence.slice(1)}</S.CharacterName>
+                                        }
 
-                                return sentence
+                                        return sentence
 
-                            }) || 'ИИ не прислал действия'
-                        : <Button disabled>{message.content?.toString()}</Button>
-                }
-            </p>)
+                                    }) || 'ИИ не прислал действия'
+                                : <Button disabled>{message.content?.toString()}</Button>
+                        }
+                    </p>
+
+                    {/* Предметы */}
+                    <S.Items>
+                        {
+                            message.role === 'assistant'
+                                ? message.content?.toString()
+                                    .split(ITEMS_GROUP_SEPARATOR)?.[1]
+                                    ?.split(ACTIONS_GROUP_SEPARATOR)?.[0]
+                                    .replace(DELETED_ITEM_SEPARATOR, '- ')
+                                    .replace(RECEIVED_ITEM_SEPARATOR, '+ ')
+                                    ?.split('\n')
+                                    ?.map(itemsGroup =>
+                                        itemsGroup
+                                            .startsWith('-')
+                                            ? itemsGroup
+                                                .replace(';', '')
+                                                .replace('-', '')
+                                                .split(',')
+                                                .map(item => item.length ? <S.DeletedItem>-{`${item} \n`}</S.DeletedItem> : null)
+                                            : itemsGroup
+                                                .replace(';', '')
+                                                .replace('+', '')
+                                                .split(',')
+                                                .map(item => item.length ? <S.RecivedItem>+{`${item} \n`}</S.RecivedItem> : null)
+                                    )
+                                : null
+                        }
+                    </S.Items>
+
+                </div>
+            ))
             : [];
-
 
     const actions =
         messages.length

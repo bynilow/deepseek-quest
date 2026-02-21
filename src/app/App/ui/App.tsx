@@ -5,7 +5,7 @@ import { useChatMutation } from '../model';
 import * as S from './App.styles';
 import { BgImage } from '../assets';
 import { NEW_GAME_FORM_KEYS, NewGameSettings, OtherGamesList, PAST_TIME, START_LOCATIONS, STORIES_STORAGE_KEY } from '@/widgets';
-import { ACTIONS_GROUP_SEPARATOR, ACTIONS_SEPARATOR, NAME_SEPARATOR, NAME_TEXT_ANCHOR } from '../constants';
+import { ACTIONS_GROUP_SEPARATOR, ACTIONS_SEPARATOR, DELETED_ITEM_SEPARATOR, ITEMS_GROUP_SEPARATOR, NAME_SEPARATOR, NAME_TEXT_ANCHOR, RECEIVED_ITEM_SEPARATOR } from '../constants';
 import { formatMessages } from '../lib';
 
 const baseRule2 = `
@@ -25,6 +25,7 @@ const baseRule2 = `
     - Варианты не взаимоисключающие, т.е., например, если в твоем описании ты написал что ГГ нашел тайник с припасами (вода и бита), он может взять все, ничего или что-то одно.
     - Ты ОБЯЗАН ВСЕГДА присылать варианты ответа (кроме смерти персонажа).
     - У предметов не может быть смежных значений, например: полупустая, заполненная на треть, в упаковке чипсов осталась горсть чипсов. Предмет либо есть, либо его нет.
+    - У предметов который находит или расходует персонаж не может быть состояний, например: грязная, чистая, порванная, мокрая и т.д. Позволяется использовать состояния только для описания в происходящем действии, например: "Джон нашел потрепанного вида рюкзак и передал его тебе", но в полученных предметах ты просто пишешь - Рюкзак (без состояния потрепанного).
     - Если ГГ отдает кому то предмет (или использует), то отдает ему полностью, он не может отдавать часть предмета (по аналогии с правилом выше).
     
     - Зомби являются медленно ходящими существами (по аналогии с сериалом ходячие мертвецы).
@@ -38,18 +39,28 @@ const baseRule2 = `
     - Варианты должны писаться в одну строку и разделяться этим знаком - ${ACTIONS_SEPARATOR} (например: Идти налево${ACTIONS_SEPARATOR} Идти направо${ACTIONS_SEPARATOR} Сходить назад${ACTIONS_SEPARATOR}).
     - Перед предложенными вариантами должен быть разделитель - ${ACTIONS_GROUP_SEPARATOR}.
     - Имена персонажей ВСЕГДА должны разделяться специальным символом (за ИСКЛЮЧЕНИЕМ вариантов выбора) - ${NAME_SEPARATOR} И перед имененем должен стоять специальный знак (за ИСКЛЮЧЕНИЕМ вариантов выбора) - ${NAME_TEXT_ANCHOR} (например: "Ты шел по дороге вместе с :${NAME_TEXT_ANCHOR}Джоном:, разговаривая о всяком", "Зомби настигает :${NAME_TEXT_ANCHOR}Джона:.").
+    - НЕЛЬЗЯ показывать диалоги с персонажем, выделяя имена тех, кто говорит. Например: ":${NAME_TEXT_ANCHOR}Джон:: - пойдем в тот дом". Ты должен приподносить это более литературно, например: ":${NAME_TEXT_ANCHOR}Джон: позвал меня в тот дом". 
     - Не добавляй в текст никаких специальных символов для украшений текста (например: *ты зашел в дом*).
-    
+    - Добавляй в конце истории то, что получил в этом действии персонаж и что он потерял, использовал и т.д. Перед списком предметов должен быть специальный разделитель - ${ITEMS_GROUP_SEPARATOR}. Используй маркер для удаленных предметов - ${DELETED_ITEM_SEPARATOR}, а для полученных - ${RECEIVED_ITEM_SEPARATOR}.
+    - Предметы надо всегда разделять запятой. 
+    - Если персонаж получил или потерял несколько предметов, то количество надо писать через - x. Например: x6 патрон для дробовика.
+    - Если у персонажа не было никаких действий с предметом, то не надо разделять текст разделителем для предмета.
+
     - Твой ответ должен иметь такую структуру:
         Действия
+        ${ITEMS_GROUP_SEPARATOR}
+        ${DELETED_ITEM_SEPARATOR} Предметы;
+        ${RECEIVED_ITEM_SEPARATOR} Предметы;
         ${ACTIONS_GROUP_SEPARATOR}
         Варианты выбора
         
         пример:
 
-        Ты осторожно открываешь дверь, ведущую с крыши в подъезд. Металлическая дверь предательски скрипит, и звук эхом разносится по лестничной клетке. Замираешь на мгновение, прислушиваясь. Внизу, этажом ниже, слышится шорох и тяжелое, влажное дыхание.
+        Ты осторожно открываешь дверь, за ней стоит зомби. Ты ударяешь своим ножом прямо по зомби и он застревает в нём. Ты устал и решил попить воды.
+        ${ITEMS_GROUP_SEPARATOR}
+        ${DELETED_ITEM_SEPARATOR} Нож, Бутылка воды;
         ${ACTIONS_GROUP_SEPARATOR}
-        Попытаться очень тихо пробраться${ACTIONS_SEPARATOR} Использовать швейцарский нож${ACTIONS_SEPARATOR} Вернуться на крышу${ACTIONS_SEPARATOR}
+        Посмотреть что в карманах зомби${ACTIONS_SEPARATOR} Пройти дальше в комнату${ACTIONS_SEPARATOR} Вернуться обратно${ACTIONS_SEPARATOR}
 
 
     Начинаем прямо сейчас.
@@ -103,6 +114,63 @@ const App: React.FC = () => {
     }
 
     const { mutate, isPending, isSuccess, data } = useChatMutation(openai);
+
+    let items: Record<string, number> = {}
+
+    console.log(
+        messages
+            .map(message => message.role === 'assistant' ? message.content?.toString() || '' : null)
+            .filter(message => message && message.includes(ITEMS_GROUP_SEPARATOR))
+            .map(message => message?.includes(DELETED_ITEM_SEPARATOR) || message?.includes(RECEIVED_ITEM_SEPARATOR) ? message?.split(ITEMS_GROUP_SEPARATOR)[1] : null)
+            .filter(Boolean)
+            .map(message => message?.split(ACTIONS_GROUP_SEPARATOR)[0].replace(';', '').replace('\n', '').trim())
+            .forEach(message => {
+                if (message?.startsWith(DELETED_ITEM_SEPARATOR)) {
+                    message?.replace(DELETED_ITEM_SEPARATOR, '').split(',').forEach(item => {
+                        item = item.trim();
+
+                        if (item.startsWith('x')) {
+                            const itemName = item.replace('x', '').split(' ').slice(1).join(' ');
+                            const count = Number(item.replace('x', '').split(' ')[0]) || 1;
+                            console.log('COUNT MINUS', count)
+                            console.log('COUNT', item.replace('x', '').split(' '))
+
+                            console.log('MINUS OPER', items[itemName] - count)
+
+                            items[itemName] =
+                                items[itemName]
+                                    ? items[itemName] - count
+                                    : count
+                        } else {
+                            items[item] = items[item] ? items[item] - 1 : 0;
+                        }
+                    })
+                } else {
+                    message?.replace(RECEIVED_ITEM_SEPARATOR, '').split(',').forEach(item => {
+                        item = item.trim();
+
+                        if (item.startsWith('x')) {
+                            const itemName = item.replace('x', '').split(' ').slice(1).join(' ');
+                            const count = Number(item.replace('x', '').split(' ')[0]) || 1;
+                            console.log('COUNT PLUS', count)
+                            console.log('COUNT', item.replace('x', '').split(' '))
+
+                            console.log('PLUS OPER', items[itemName] + count)
+                            items[itemName] =
+                                items[itemName]
+                                    ? items[itemName] + count
+                                    : count;
+
+                        } else {
+                            items[item] = items[item] ? items[item] + 1 : 1;
+                        }
+                    })
+                }
+
+            })
+    )
+
+    console.log(items)
 
     useEffect(() => {
         if (isSuccess && data) {
