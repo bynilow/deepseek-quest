@@ -1,4 +1,4 @@
-import { Button, Input, Select } from '@/shared';
+import { Button, Input, Select, Title } from '@/shared';
 import * as S from './NewGameSettings.styles';
 import { Formik } from 'formik';
 import { PAST_TIME, SEX, START_LOCATIONS } from './constants';
@@ -31,7 +31,7 @@ const NewGameSettings = ({ onSubmit }: Props) => {
 
                 return (
                     <S.NewGameSettings onSubmit={handleSubmit}>
-                        <h1>настройка</h1>
+                        <Title>Новая игра</Title>
                         <Input
                             name={NEW_GAME_FORM_KEYS.NAME}
                             placeholder='имя'

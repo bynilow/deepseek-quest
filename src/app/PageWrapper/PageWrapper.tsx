@@ -13,7 +13,7 @@ const PageWrapper = ({ children }: Props) => {
             <S.globalStyles />
             <S.BackgroundImage src={BgImage} />
             <S.Wrapper>
-                <NavBar onChange={() => null} />
+                <NavBar />
                 {children}
             </S.Wrapper>
         </>

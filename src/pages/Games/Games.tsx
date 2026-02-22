@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import * as S from './Games.styles';
-import { Button, StoredChat } from '@/shared';
+import { Button, PATHS, StoredChat, Title } from '@/shared';
 import { STORIES_STORAGE_KEY } from './constants';
 import { useNavigate } from 'react-router-dom';
 
@@ -21,13 +21,15 @@ const Games = () => {
         const foundedGame = otherStories.find(story => story.chatId === gameId);
 
         if (foundedGame) {
-            navigate(`/game?chat=${foundedGame.chatId}`, { replace: true })
+            navigate(`${PATHS.GAME}?chat=${foundedGame.chatId}`, { replace: true })
         }
     }
 
     return (
         <S.Games>
-            сохраненые игры
+            <Title>
+                Сохранённые игры
+            </Title>
             <S.List>
                 {
                     otherStories.map(story =>

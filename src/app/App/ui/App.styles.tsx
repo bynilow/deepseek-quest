@@ -7,7 +7,6 @@ const App = styled.div`
     gap: 24px;
     color: #dfe0e0;
     z-index: 1;
-    padding: 16px;
 `;
 
 const CharacterName = styled.span`

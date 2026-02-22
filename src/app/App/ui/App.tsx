@@ -1,5 +1,5 @@
 import { useOpenAI } from '@/context';
-import { Button, Input, saveChatToStorage, type ChatMessage, type StoredChat } from '@/shared';
+import { Button, Input, PATHS, saveChatToStorage, type ChatMessage, type StoredChat } from '@/shared';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useChatMutation } from '../model';
 import * as S from './App.styles';
@@ -111,19 +111,7 @@ const App: React.FC = () => {
 
         saveChatToStorage(chatId, newMessages);
 
-        navigate(`/game?chat=${chatId}`, { replace: true })
-    }
-
-    const handleChangeStory = (game: StoredChat) => {
-        // setChatName(game.chatId);
-
-        // setMessages(game.messages);
-
-        // if (game.messages[game.messages.length - 1].role === 'user') {
-        //     mutate({
-        //         messages: game.messages
-        //     });
-        // }
+        navigate(`${PATHS.GAME}?chat=${chatId}`, { replace: true })
     }
 
 

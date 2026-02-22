@@ -88,4 +88,17 @@ const Select = ({ values, value, onChange, placeholder, name }: SelectProps) => 
     )
 }
 
-export { Button, Input, Select, SwitchButton };
+interface TitleProps {
+    children: React.ReactElement | string;
+}
+
+const Title = ({ children }: TitleProps) => {
+
+    return (
+        <S.Title>
+            {children}
+        </S.Title>
+    )
+}
+
+export { Button, Input, Select, SwitchButton, Title };

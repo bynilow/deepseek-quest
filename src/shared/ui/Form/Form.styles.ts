@@ -117,4 +117,9 @@ const Icon = styled.img`
     filter: invert(100%);
 `;
 
-export { Button, Input, Select, Dropdown, CloseDropdownBackground, SelectPlaceholder, SwitchButton, Icon };
+const Title = styled.div`
+    font-size: 24px;
+    font-weight: bold;
+`
+
+export { Button, Input, Select, Dropdown, CloseDropdownBackground, SelectPlaceholder, SwitchButton, Icon, Title };
