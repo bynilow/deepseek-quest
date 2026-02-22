@@ -24,6 +24,7 @@ const globalStyles = createGlobalStyle`
         font-optical-sizing: auto;
         font-style: normal;
         box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
     }
 `
 
