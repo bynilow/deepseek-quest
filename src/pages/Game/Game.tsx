@@ -2,7 +2,7 @@ import { useChatMutation } from '@/app';
 import { ACTIONS_GROUP_SEPARATOR, DELETED_ITEM_SEPARATOR, ITEMS_GROUP_SEPARATOR, RECEIVED_ITEM_SEPARATOR } from '@/app/App/constants';
 import { formatMessages } from '@/app/App/lib';
 import { useOpenAI } from '@/context';
-import { ChatMessage, saveChatToStorage, StoredChat, STORIES_STORAGE_KEY } from '@/shared';
+import { ChatMessage, Loader, saveChatToStorage, StoredChat, STORIES_STORAGE_KEY } from '@/shared';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import * as S from './Game.styles';
@@ -157,7 +157,7 @@ const Game = () => {
                             </S.StoryMessages>
 
                             {
-                                isPending && <p>Загружаюся...</p>
+                                isPending && <Loader />
                             }
 
                             <S.Actions>

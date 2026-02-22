@@ -9,11 +9,12 @@ const Button = (props: ButtonHTMLAttributes<HTMLButtonElement>) => {
 
 interface SwitchButtonProps {
     isActive: boolean;
+    icon?: string;
 }
 
-const SwitchButton = ({ isActive, ...props }: ButtonHTMLAttributes<HTMLButtonElement> & SwitchButtonProps) => {
+const SwitchButton = ({ isActive, icon, ...props }: ButtonHTMLAttributes<HTMLButtonElement> & SwitchButtonProps) => {
     return <S.SwitchButton $isActive={isActive} {...props}>
-        {props.children}
+        {icon ? <S.Icon src={icon} /> : props.children}
     </S.SwitchButton>
 };
 

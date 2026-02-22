@@ -111,4 +111,10 @@ const SwitchButton = styled.button<{ $isActive: boolean }>`
     };
 `
 
-export { Button, Input, Select, Dropdown, CloseDropdownBackground, SelectPlaceholder, SwitchButton };
+const Icon = styled.img`
+    width: 12px;
+    height: 12px;
+    filter: invert(100%);
+`;
+
+export { Button, Input, Select, Dropdown, CloseDropdownBackground, SelectPlaceholder, SwitchButton, Icon };

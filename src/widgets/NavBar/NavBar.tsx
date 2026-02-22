@@ -1,4 +1,4 @@
-import { Button, SwitchButton } from '@/shared';
+import { Button, leftArrowIcon, SwitchButton } from '@/shared';
 import * as S from './NavBar.styles';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -87,9 +87,7 @@ const NavBar = ({ onChange }: Props) => {
             {
                 chatId && (
                     <>
-                        <SwitchButton isActive={selectedTab === TAB_NAME.BACK} onClick={() => handleChangeTab(TAB_NAME.BACK)}>
-                            Назад
-                        </SwitchButton>
+                        <SwitchButton isActive={selectedTab === TAB_NAME.BACK} icon={leftArrowIcon} onClick={() => handleChangeTab(TAB_NAME.BACK)} />
                         <SwitchButton isActive={selectedTab === TAB_NAME.GAME} onClick={() => handleChangeTab(TAB_NAME.GAME)}>
                             Игра
                         </SwitchButton>
