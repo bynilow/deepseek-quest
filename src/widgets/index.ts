@@ -1,2 +1,2 @@
 export * from './NewGameSettings';
-export * from './OtherGamesList';
+export * from './NavBar';

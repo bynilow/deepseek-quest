@@ -24,7 +24,20 @@ const formatMessages = (messages: ChatMessage[], handleSubmit: (action: string) 
                                         return sentence
 
                                     }) || 'ИИ не прислал действия'
-                                : <Button disabled>{message.content?.toString()}</Button>
+                                : <Button disabled>
+                                    {
+                                        message.content?.toString()
+                                            .split(NAME_SEPARATOR)
+                                            .map((sentence, index) => {
+                                                if (sentence.charAt(0) === NAME_TEXT_ANCHOR) {
+                                                    return <S.CharacterName key={sentence + index}>{sentence.slice(1)}</S.CharacterName>
+                                                }
+
+                                                return sentence
+
+                                            })
+                                    }
+                                </Button>
                         }
                     </p>
 

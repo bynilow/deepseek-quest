@@ -1,12 +1,14 @@
 import { useOpenAI } from '@/context';
-import { Button, Input, type ChatMessage, type StoredChat } from '@/shared';
+import { Button, Input, saveChatToStorage, type ChatMessage, type StoredChat } from '@/shared';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useChatMutation } from '../model';
 import * as S from './App.styles';
-import { BgImage } from '../assets';
-import { NEW_GAME_FORM_KEYS, NewGameSettings, OtherGamesList, PAST_TIME, START_LOCATIONS, STORIES_STORAGE_KEY } from '@/widgets';
+import { BgImage } from '../../PageWrapper/assets';
+import { NavBar, NEW_GAME_FORM_KEYS, NewGameSettings, PAST_TIME, START_LOCATIONS } from '@/widgets';
 import { ACTIONS_GROUP_SEPARATOR, ACTIONS_SEPARATOR, DELETED_ITEM_SEPARATOR, ITEMS_GROUP_SEPARATOR, NAME_SEPARATOR, NAME_TEXT_ANCHOR, RECEIVED_ITEM_SEPARATOR } from '../constants';
 import { formatMessages } from '../lib';
+import { STORIES_STORAGE_KEY } from '@/pages/Games/constants';
+import { useNavigate } from 'react-router-dom';
 
 const baseRule2 = `
     Давай сыграем в рпг квест в сеттинге зомбоапокалипсиса.
@@ -41,10 +43,14 @@ const baseRule2 = `
     - Имена персонажей ВСЕГДА должны разделяться специальным символом (за ИСКЛЮЧЕНИЕМ вариантов выбора) - ${NAME_SEPARATOR} И перед имененем должен стоять специальный знак (за ИСКЛЮЧЕНИЕМ вариантов выбора) - ${NAME_TEXT_ANCHOR} (например: "Ты шел по дороге вместе с :${NAME_TEXT_ANCHOR}Джоном:, разговаривая о всяком", "Зомби настигает :${NAME_TEXT_ANCHOR}Джона:.").
     - НЕЛЬЗЯ показывать диалоги с персонажем, выделяя имена тех, кто говорит. Например: ":${NAME_TEXT_ANCHOR}Джон:: - пойдем в тот дом". Ты должен приподносить это более литературно, например: ":${NAME_TEXT_ANCHOR}Джон: позвал меня в тот дом". 
     - Не добавляй в текст никаких специальных символов для украшений текста (например: *ты зашел в дом*).
-    - Добавляй в конце истории то, что получил в этом действии персонаж и что он потерял, использовал и т.д. Перед списком предметов должен быть специальный разделитель - ${ITEMS_GROUP_SEPARATOR}. Используй маркер для удаленных предметов - ${DELETED_ITEM_SEPARATOR}, а для полученных - ${RECEIVED_ITEM_SEPARATOR}.
+    - Добавляй в конце истории то, что получил в этом действии персонаж и что он потерял, использовал, передал, купил т.д. Перед списком предметов должен быть специальный разделитель - ${ITEMS_GROUP_SEPARATOR}. Используй маркер для удаленных предметов - ${DELETED_ITEM_SEPARATOR}, а для полученных - ${RECEIVED_ITEM_SEPARATOR}.
     - Предметы надо всегда разделять запятой. 
-    - Если персонаж получил или потерял несколько предметов, то количество надо писать через - x. Например: x6 патрон для дробовика.
+    - Если персонаж получил или потерял несколько предметов, то количество надо писать вначале наименования предмета через - x. Например: x6 патрон для дробовика.
     - Если у персонажа не было никаких действий с предметом, то не надо разделять текст разделителем для предмета.
+
+    - Шанс смерти после опасного действия (например: ударить зомби, атаковать противника и т.д) - 70% (Это значит, что шансом 7 к 10, ты должен привести к смерти персонажа). Нельзя писать о шансе смерти персонажу.
+
+    - ВСЕГДА, В КАЖДОМ СВОЕМ СООБЩЕНИИ ПОЛЬЗУЙСЯ ВСЕМИ ЭТИМИ ПРАВИЛАМИ.
 
     - Твой ответ должен иметь такую структуру:
         Действия
@@ -73,126 +79,8 @@ const baseRule2 = `
     Время с момента апокалипсиса: $5
 `
 
-const saveChatToStorage = (chatId: string, newMessages: ChatMessage[]) => {
-    const storiesLocalStorage = localStorage.getItem(STORIES_STORAGE_KEY);
-    let parsedStories: StoredChat[] = [];
-
-    if (storiesLocalStorage) {
-        parsedStories = JSON.parse(storiesLocalStorage);
-        console.log('to save chat id:', chatId)
-        const foundedStory = parsedStories.find(story => story.chatId === chatId);
-        if (foundedStory) {
-            parsedStories = parsedStories.map(story => story.chatId === chatId ? { chatId: story.chatId, messages: newMessages } : story);
-        } else {
-            parsedStories = [...parsedStories, { chatId, messages: newMessages }];
-        }
-    } else {
-        parsedStories = [
-            ...parsedStories,
-            {
-                chatId: chatId,
-                messages: newMessages,
-            }
-        ];
-    }
-
-    localStorage.setItem(STORIES_STORAGE_KEY, JSON.stringify(parsedStories));
-}
-
 const App: React.FC = () => {
-    const [messages, setMessages] = useState<ChatMessage[]>([]);
-
-    const [chatName, setChatName] = useState('');
-
-    const openai = useOpenAI();
-
-    const handleAddMessageFromAi = (message: string | null) => {
-        const newMessages: ChatMessage[] = [...messages, { role: 'assistant', content: message }];
-
-        setMessages((prevMessages) => [...prevMessages, { role: 'assistant', content: message }]);
-        saveChatToStorage(chatName, newMessages);
-    }
-
-    const { mutate, isPending, isSuccess, data } = useChatMutation(openai);
-
-    let items: Record<string, number> = {}
-
-    console.log(
-        messages
-            .map(message => message.role === 'assistant' ? message.content?.toString() || '' : null)
-            .filter(message => message && message.includes(ITEMS_GROUP_SEPARATOR))
-            .map(message => message?.includes(DELETED_ITEM_SEPARATOR) || message?.includes(RECEIVED_ITEM_SEPARATOR) ? message?.split(ITEMS_GROUP_SEPARATOR)[1] : null)
-            .filter(Boolean)
-            .map(message => message?.split(ACTIONS_GROUP_SEPARATOR)[0].replace(';', '').replace('\n', '').trim())
-            .forEach(message => {
-                if (message?.startsWith(DELETED_ITEM_SEPARATOR)) {
-                    message?.replace(DELETED_ITEM_SEPARATOR, '').split(',').forEach(item => {
-                        item = item.trim();
-
-                        if (item.startsWith('x')) {
-                            const itemName = item.replace('x', '').split(' ').slice(1).join(' ');
-                            const count = Number(item.replace('x', '').split(' ')[0]) || 1;
-                            console.log('COUNT MINUS', count)
-                            console.log('COUNT', item.replace('x', '').split(' '))
-
-                            console.log('MINUS OPER', items[itemName] - count)
-
-                            items[itemName] =
-                                items[itemName]
-                                    ? items[itemName] - count
-                                    : count
-                        } else {
-                            items[item] = items[item] ? items[item] - 1 : 0;
-                        }
-                    })
-                } else {
-                    message?.replace(RECEIVED_ITEM_SEPARATOR, '').split(',').forEach(item => {
-                        item = item.trim();
-
-                        if (item.startsWith('x')) {
-                            const itemName = item.replace('x', '').split(' ').slice(1).join(' ');
-                            const count = Number(item.replace('x', '').split(' ')[0]) || 1;
-                            console.log('COUNT PLUS', count)
-                            console.log('COUNT', item.replace('x', '').split(' '))
-
-                            console.log('PLUS OPER', items[itemName] + count)
-                            items[itemName] =
-                                items[itemName]
-                                    ? items[itemName] + count
-                                    : count;
-
-                        } else {
-                            items[item] = items[item] ? items[item] + 1 : 1;
-                        }
-                    })
-                }
-
-            })
-    )
-
-    console.log(items)
-
-    useEffect(() => {
-        if (isSuccess && data) {
-            handleAddMessageFromAi(data || '');
-        }
-    }, [isSuccess, data])
-
-    const handleSubmitAction = (action: string) => {
-        const updatedMessages: ChatMessage[] = [
-            ...messages,
-            { role: "user", content: action }
-        ];
-
-        setMessages(updatedMessages);
-
-        mutate({
-            messages: updatedMessages
-        });
-
-        saveChatToStorage(chatName, updatedMessages);
-    }
-
+    const navigate = useNavigate();
 
     const handleStartGame = (values: Record<NEW_GAME_FORM_KEYS, string>) => {
         const { name, age, sex, pastDays, startLocation } = values;
@@ -218,71 +106,30 @@ const App: React.FC = () => {
             content: baseRule2.replace('$1', name).replace('$2', age).replace('$3', sex).replace('$4', finalStartLocation).replace('$5', finalPastTime)
         }];
 
-        setChatName(`${name}, ${age}`);
+        const chatId = `${name}, ${age}`;
 
-        setMessages(newMessages);
+        saveChatToStorage(chatId, newMessages);
 
-        mutate({
-            messages: newMessages
-        });
-
-        saveChatToStorage(`${name}, ${age}`, newMessages);
+        navigate(`/game?chat=${chatId}`, { replace: true })
     }
 
     const handleChangeStory = (game: StoredChat) => {
-        setChatName(game.chatId);
+        // setChatName(game.chatId);
 
-        setMessages(game.messages);
+        // setMessages(game.messages);
 
-        if (game.messages[game.messages.length - 1].role === 'user') {
-            mutate({
-                messages: game.messages
-            });
-        }
+        // if (game.messages[game.messages.length - 1].role === 'user') {
+        //     mutate({
+        //         messages: game.messages
+        //     });
+        // }
     }
 
-    const storyRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        if (storyRef.current) {
-            storyRef.current.scrollTo({
-                top: storyRef.current.scrollHeight,
-                behavior: 'smooth'
-            });
-        }
-    }, [messages]);
-
-    const story = useMemo(() => formatMessages(messages, handleSubmitAction), [messages]);
 
     return (
         <>
-            <S.globalStyles />
-            <S.BackgroundImage src={BgImage} />
             <S.App>
-                <OtherGamesList onSelectGame={handleChangeStory} />
-                <S.StoryGroup>
-                    {
-                        messages.length === 0
-                            ? <NewGameSettings onSubmit={handleStartGame} />
-                            : <S.Story>
-                                <S.StoryMessages ref={storyRef}>
-                                    {
-                                        story.story
-                                    }
-                                </S.StoryMessages>
-
-                                {
-                                    isPending && <p>Загружаюся...</p>
-                                }
-
-                                <S.Actions>
-                                    {
-                                        story.actions
-                                    }
-                                </S.Actions>
-                            </S.Story>
-                    }
-                </S.StoryGroup>
+                <NewGameSettings onSubmit={handleStartGame} />
             </S.App>
         </>
     );

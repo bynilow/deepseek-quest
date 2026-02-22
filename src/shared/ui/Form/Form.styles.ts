@@ -88,4 +88,27 @@ const Dropdown = styled.div`
     }
 `;
 
-export { Button, Input, Select, Dropdown, CloseDropdownBackground, SelectPlaceholder };
+const SwitchButton = styled.button<{ $isActive: boolean }>`
+    padding: 8px 18px;
+    background-color: #4141415a;
+    color: ${({ $isActive }) => $isActive ? '#c6f0ff' : '#a1a1a1'} ;
+    font-size: 14px;
+    border-radius: 1000px;
+    outline: none;
+    border: ${({ $isActive }) => $isActive ? '1px solid #dfe0e045' : '1px solid #dfe0e002'};
+    backdrop-filter: blur(5px);
+    cursor: pointer;
+    font-weight: bold;
+    width: fit-content;
+
+    transition: 0.3s ease;
+
+    &:disabled {
+        background-color: #1b1d1e;
+        border: 1px solid #dfe0e014;
+        color: #a1a1a1;
+        cursor: default;
+    };
+`
+
+export { Button, Input, Select, Dropdown, CloseDropdownBackground, SelectPlaceholder, SwitchButton };

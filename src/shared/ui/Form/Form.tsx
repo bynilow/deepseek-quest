@@ -7,6 +7,16 @@ const Button = (props: ButtonHTMLAttributes<HTMLButtonElement>) => {
     </S.Button>
 };
 
+interface SwitchButtonProps {
+    isActive: boolean;
+}
+
+const SwitchButton = ({ isActive, ...props }: ButtonHTMLAttributes<HTMLButtonElement> & SwitchButtonProps) => {
+    return <S.SwitchButton $isActive={isActive} {...props}>
+        {props.children}
+    </S.SwitchButton>
+};
+
 const Input = (props: InputHTMLAttributes<HTMLInputElement>) => {
     const [value, setInnerValue] = useState('');
 
@@ -77,4 +87,4 @@ const Select = ({ values, value, onChange, placeholder, name }: SelectProps) => 
     )
 }
 
-export { Button, Input, Select };
+export { Button, Input, Select, SwitchButton };
