@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 const Games = styled.div`
     display: flex;
@@ -12,6 +12,6 @@ const List = styled.div`
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-`
+`;
 
 export { Games, List };

@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 const StoryGroup = styled.div`
     height: 100%;
@@ -25,7 +25,7 @@ const Actions = styled.div`
             width: 100%;
         }
     }
-`
+`;
 
 const StoryMessages = styled.div`
     display: flex;
@@ -37,6 +37,6 @@ const StoryMessages = styled.div`
     @media (max-width: 786px) {
         width: 100%;
     }
-`
+`;
 
 export { StoryGroup, Story, Actions, StoryMessages };

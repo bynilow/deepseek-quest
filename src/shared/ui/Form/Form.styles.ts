@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled from 'styled-components';
 
 const Button = styled.button`
     padding: 16px 32px;
@@ -20,8 +20,8 @@ const Button = styled.button`
         border: 1px solid #dfe0e014;
         color: #a1a1a1;
         cursor: default;
-    };
-`
+    }
+`;
 
 const Input = styled.input`
     padding: 16px;
@@ -33,7 +33,7 @@ const Input = styled.input`
     border: 1px solid #dfe0e045;
     backdrop-filter: blur(5px);
     font-weight: bold;
-`
+`;
 
 const Select = styled.div<{ $isDropdownOpened: boolean }>`
     padding: 16px;
@@ -48,12 +48,12 @@ const Select = styled.div<{ $isDropdownOpened: boolean }>`
     position: relative;
     user-select: none;
     cursor: pointer;
-    z-index: ${({ $isDropdownOpened }) => $isDropdownOpened ? '3' : '1'};
-`
+    z-index: ${({ $isDropdownOpened }) => ($isDropdownOpened ? '3' : '1')};
+`;
 
 const SelectPlaceholder = styled.span`
     color: #6d6d6d;
-`
+`;
 
 const CloseDropdownBackground = styled.div`
     width: 100vw;
@@ -62,7 +62,7 @@ const CloseDropdownBackground = styled.div`
     top: 0;
     left: 0;
     z-index: 1;
-`
+`;
 
 const Dropdown = styled.div`
     display: flex;
@@ -91,11 +91,11 @@ const Dropdown = styled.div`
 const SwitchButton = styled.button<{ $isActive: boolean }>`
     padding: 8px 18px;
     background-color: #4141415a;
-    color: ${({ $isActive }) => $isActive ? '#c6f0ff' : '#a1a1a1'} ;
+    color: ${({ $isActive }) => ($isActive ? '#c6f0ff' : '#a1a1a1')};
     font-size: 14px;
     border-radius: 1000px;
     outline: none;
-    border: ${({ $isActive }) => $isActive ? '1px solid #dfe0e045' : '1px solid #dfe0e002'};
+    border: ${({ $isActive }) => ($isActive ? '1px solid #dfe0e045' : '1px solid #dfe0e002')};
     backdrop-filter: blur(5px);
     cursor: pointer;
     font-weight: bold;
@@ -108,8 +108,8 @@ const SwitchButton = styled.button<{ $isActive: boolean }>`
         border: 1px solid #dfe0e014;
         color: #a1a1a1;
         cursor: default;
-    };
-`
+    }
+`;
 
 const Icon = styled.img`
     width: 12px;
@@ -120,6 +120,16 @@ const Icon = styled.img`
 const Title = styled.div`
     font-size: 24px;
     font-weight: bold;
-`
+`;
 
-export { Button, Input, Select, Dropdown, CloseDropdownBackground, SelectPlaceholder, SwitchButton, Icon, Title };
+export {
+    Button,
+    Input,
+    Select,
+    Dropdown,
+    CloseDropdownBackground,
+    SelectPlaceholder,
+    SwitchButton,
+    Icon,
+    Title,
+};

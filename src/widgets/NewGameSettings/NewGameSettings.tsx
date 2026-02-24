@@ -25,7 +25,8 @@ const NewGameSettings = ({ onSubmit }: Props) => {
                 [NEW_GAME_FORM_KEYS.START_LOCATION]: '',
                 [NEW_GAME_FORM_KEYS.PAST_DAYS]: '',
             }}
-            onSubmit={onSubmit}>
+            onSubmit={onSubmit}
+        >
             {({ values, handleChange, handleSubmit }) => {
                 console.log(values);
 
@@ -34,47 +35,55 @@ const NewGameSettings = ({ onSubmit }: Props) => {
                         <Title>Новая игра</Title>
                         <Input
                             name={NEW_GAME_FORM_KEYS.NAME}
-                            placeholder='имя'
+                            placeholder="имя"
                             onChange={handleChange}
-                            value={values[NEW_GAME_FORM_KEYS.NAME]} />
+                            value={values[NEW_GAME_FORM_KEYS.NAME]}
+                        />
                         <Input
                             name={NEW_GAME_FORM_KEYS.AGE}
-                            placeholder='возраст'
+                            placeholder="возраст"
                             onChange={handleChange}
-                            value={values[NEW_GAME_FORM_KEYS.AGE]} />
+                            value={values[NEW_GAME_FORM_KEYS.AGE]}
+                        />
                         <Select
                             name={NEW_GAME_FORM_KEYS.SEX}
-                            placeholder='пол'
+                            placeholder="пол"
                             onChange={handleChange}
                             value={values[NEW_GAME_FORM_KEYS.SEX]}
-                            values={Object.values(SEX)} />
+                            values={Object.values(SEX)}
+                        />
                         <Select
                             name={NEW_GAME_FORM_KEYS.START_LOCATION}
-                            placeholder='стартовая локация'
+                            placeholder="стартовая локация"
                             value={values[NEW_GAME_FORM_KEYS.START_LOCATION]}
                             onChange={handleChange}
-                            values={Object.values(START_LOCATIONS)} />
+                            values={Object.values(START_LOCATIONS)}
+                        />
                         <Select
                             name={NEW_GAME_FORM_KEYS.PAST_DAYS}
-                            placeholder='время с начала апокалипсиса'
+                            placeholder="время с начала апокалипсиса"
                             values={Object.values(PAST_TIME)}
                             onChange={handleChange}
-                            value={values[NEW_GAME_FORM_KEYS.PAST_DAYS]} />
+                            value={values[NEW_GAME_FORM_KEYS.PAST_DAYS]}
+                        />
 
-                        <Button type="submit" disabled={
-                            !values[NEW_GAME_FORM_KEYS.NAME] ||
-                            !values[NEW_GAME_FORM_KEYS.AGE] ||
-                            !values[NEW_GAME_FORM_KEYS.SEX] ||
-                            !values[NEW_GAME_FORM_KEYS.START_LOCATION] ||
-                            !values[NEW_GAME_FORM_KEYS.PAST_DAYS]
-                        }>
+                        <Button
+                            type="submit"
+                            disabled={
+                                !values[NEW_GAME_FORM_KEYS.NAME] ||
+                                !values[NEW_GAME_FORM_KEYS.AGE] ||
+                                !values[NEW_GAME_FORM_KEYS.SEX] ||
+                                !values[NEW_GAME_FORM_KEYS.START_LOCATION] ||
+                                !values[NEW_GAME_FORM_KEYS.PAST_DAYS]
+                            }
+                        >
                             начать
                         </Button>
                     </S.NewGameSettings>
-                )
+                );
             }}
         </Formik>
-    )
-}
+    );
+};
 
 export { NewGameSettings, NEW_GAME_FORM_KEYS };

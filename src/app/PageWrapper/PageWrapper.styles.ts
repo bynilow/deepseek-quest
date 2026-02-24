@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import { createGlobalStyle } from 'styled-components'
+import styled from 'styled-components';
+import { createGlobalStyle } from 'styled-components';
 
 const globalStyles = createGlobalStyle`
     body {
@@ -26,7 +26,7 @@ const globalStyles = createGlobalStyle`
         box-sizing: border-box;
         -webkit-tap-highlight-color: transparent;
     }
-`
+`;
 
 const Wrapper = styled.div`
     position: relative;
@@ -50,6 +50,6 @@ const BackgroundImage = styled.img`
     left: 0;
     z-index: -1;
     filter: blur(50px);
-`
+`;
 
 export { globalStyles, Wrapper, BackgroundImage };

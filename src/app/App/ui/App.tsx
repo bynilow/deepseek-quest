@@ -1,14 +1,17 @@
-import { useOpenAI } from '@/context';
-import { Button, Input, PATHS, saveChatToStorage, type ChatMessage, type StoredChat } from '@/shared';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useChatMutation } from '../model';
-import * as S from './App.styles';
-import { BgImage } from '../../PageWrapper/assets';
-import { NavBar, NEW_GAME_FORM_KEYS, NewGameSettings, PAST_TIME, START_LOCATIONS } from '@/widgets';
-import { ACTIONS_GROUP_SEPARATOR, ACTIONS_SEPARATOR, DELETED_ITEM_SEPARATOR, ITEMS_GROUP_SEPARATOR, NAME_SEPARATOR, NAME_TEXT_ANCHOR, RECEIVED_ITEM_SEPARATOR } from '../constants';
-import { formatMessages } from '../lib';
-import { STORIES_STORAGE_KEY } from '@/pages/Games/constants';
+import { PATHS, saveChatToStorage, type ChatMessage } from '@/shared';
+import { NEW_GAME_FORM_KEYS, NewGameSettings, PAST_TIME, START_LOCATIONS } from '@/widgets';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import {
+    ACTIONS_GROUP_SEPARATOR,
+    ACTIONS_SEPARATOR,
+    DELETED_ITEM_SEPARATOR,
+    ITEMS_GROUP_SEPARATOR,
+    NAME_SEPARATOR,
+    NAME_TEXT_ANCHOR,
+    RECEIVED_ITEM_SEPARATOR,
+} from '../constants';
+import * as S from './App.styles';
 
 const baseRule2 = `
     Давай сыграем в рпг квест в сеттинге зомбоапокалипсиса.
@@ -78,7 +81,7 @@ const baseRule2 = `
     Пол: $3
     Стартовая локация: $4
     Время с момента апокалипсиса: $5
-`
+`;
 
 const App: React.FC = () => {
     const navigate = useNavigate();
@@ -91,7 +94,10 @@ const App: React.FC = () => {
         if (!finalStartLocation) {
             const startLocationWithoutRandom = Object.values(START_LOCATIONS).slice(1);
             console.log('finalStartLocation', startLocationWithoutRandom);
-            finalStartLocation = startLocationWithoutRandom[Math.ceil(Math.random() * startLocationWithoutRandom.length - 1)];
+            finalStartLocation =
+                startLocationWithoutRandom[
+                    Math.ceil(Math.random() * startLocationWithoutRandom.length - 1)
+                ];
         }
 
         let finalPastTime = pastDays === PAST_TIME.random ? '' : pastDays;
@@ -99,21 +105,28 @@ const App: React.FC = () => {
         if (!finalPastTime) {
             const pastTimeWithoutRandom = Object.values(PAST_TIME).slice(1);
             console.log('pastTimeWithoutRandom', pastTimeWithoutRandom);
-            finalPastTime = pastTimeWithoutRandom[Math.ceil(Math.random() * pastTimeWithoutRandom.length - 1)];
+            finalPastTime =
+                pastTimeWithoutRandom[Math.ceil(Math.random() * pastTimeWithoutRandom.length - 1)];
         }
 
-        const newMessages: ChatMessage[] = [{
-            role: 'user',
-            content: baseRule2.replace('$1', name).replace('$2', age).replace('$3', sex).replace('$4', finalStartLocation).replace('$5', finalPastTime)
-        }];
+        const newMessages: ChatMessage[] = [
+            {
+                role: 'user',
+                content: baseRule2
+                    .replace('$1', name)
+                    .replace('$2', age)
+                    .replace('$3', sex)
+                    .replace('$4', finalStartLocation)
+                    .replace('$5', finalPastTime),
+            },
+        ];
 
         const chatId = `${name}, ${age}`;
 
         saveChatToStorage(chatId, newMessages);
 
-        navigate(`${PATHS.GAME}?chat=${chatId}`, { replace: true })
-    }
-
+        navigate(`${PATHS.GAME}?chat=${chatId}`, { replace: true });
+    };
 
     return (
         <>
@@ -125,4 +138,3 @@ const App: React.FC = () => {
 };
 
 export { App };
-

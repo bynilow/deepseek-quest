@@ -4,17 +4,13 @@ import OpenAI from 'openai';
 const openai = new OpenAI({
     baseURL: 'https://neuroapi.host/v1',
     apiKey: process.env.OPEN_AI_API_KEY,
-    dangerouslyAllowBrowser: true
+    dangerouslyAllowBrowser: true,
 });
 
 const OpenAIContext = createContext<OpenAI | null>(null);
 
 const OpenAIProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    return (
-        <OpenAIContext.Provider value={openai}>
-            {children}
-        </OpenAIContext.Provider>
-    );
+    return <OpenAIContext.Provider value={openai}>{children}</OpenAIContext.Provider>;
 };
 
 const useOpenAI = () => {
@@ -25,4 +21,4 @@ const useOpenAI = () => {
     return context;
 };
 
-export { OpenAIProvider, useOpenAI }
+export { OpenAIProvider, useOpenAI };

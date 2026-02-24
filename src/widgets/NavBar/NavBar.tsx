@@ -1,7 +1,7 @@
-import { Button, leftArrowIcon, PATHS, SwitchButton } from '@/shared';
-import * as S from './NavBar.styles';
+import { leftArrowIcon, PATHS, SwitchButton } from '@/shared';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import * as S from './NavBar.styles';
 
 enum TAB_NAME {
     NEW_GAME = 'newGame',
@@ -22,8 +22,8 @@ const NavBar = () => {
         const searchParams = new URLSearchParams(location.search);
 
         return {
-            chatId: searchParams.get('chat') || ''
-        }
+            chatId: searchParams.get('chat') || '',
+        };
     }, [location]);
 
     useEffect(() => {
@@ -45,7 +45,7 @@ const NavBar = () => {
                 break;
             }
         }
-    }, [location])
+    }, [location]);
 
     const handleChangeTab = (path: string) => {
         setSelectedTab(path);
@@ -55,39 +55,49 @@ const NavBar = () => {
         } else {
             navigate(`${path}?chat=${chatId}`, { replace: true });
         }
-
-    }
+    };
 
     return (
         <S.NavBar>
-            {
-                !chatId && (
-                    <>
-                        <SwitchButton isActive={selectedTab === TAB_NAME.NEW_GAME} onClick={() => handleChangeTab(PATHS.HOME)}>
-                            Новая
-                        </SwitchButton>
-                        <SwitchButton isActive={selectedTab === TAB_NAME.GAMES} onClick={() => handleChangeTab(PATHS.GAMES)}>
-                            Игры
-                        </SwitchButton>
-                    </>
-                )
-            }
-            {
-                chatId && (
-                    <>
-                        <SwitchButton isActive={selectedTab === TAB_NAME.BACK} icon={leftArrowIcon} onClick={() => handleChangeTab(PATHS.HOME)} />
-                        <SwitchButton isActive={selectedTab === TAB_NAME.GAME} onClick={() => handleChangeTab(PATHS.GAME)}>
-                            Игра
-                        </SwitchButton>
-                        <SwitchButton isActive={selectedTab === TAB_NAME.INVENTORY} onClick={() => handleChangeTab(PATHS.INVENTORY)}>
-                            Инвентарь
-                        </SwitchButton>
-                    </>
-                )
-            }
-
+            {!chatId && (
+                <>
+                    <SwitchButton
+                        isActive={selectedTab === TAB_NAME.NEW_GAME}
+                        onClick={() => handleChangeTab(PATHS.HOME)}
+                    >
+                        Новая
+                    </SwitchButton>
+                    <SwitchButton
+                        isActive={selectedTab === TAB_NAME.GAMES}
+                        onClick={() => handleChangeTab(PATHS.GAMES)}
+                    >
+                        Игры
+                    </SwitchButton>
+                </>
+            )}
+            {chatId && (
+                <>
+                    <SwitchButton
+                        isActive={selectedTab === TAB_NAME.BACK}
+                        icon={leftArrowIcon}
+                        onClick={() => handleChangeTab(PATHS.HOME)}
+                    />
+                    <SwitchButton
+                        isActive={selectedTab === TAB_NAME.GAME}
+                        onClick={() => handleChangeTab(PATHS.GAME)}
+                    >
+                        Игра
+                    </SwitchButton>
+                    <SwitchButton
+                        isActive={selectedTab === TAB_NAME.INVENTORY}
+                        onClick={() => handleChangeTab(PATHS.INVENTORY)}
+                    >
+                        Инвентарь
+                    </SwitchButton>
+                </>
+            )}
         </S.NavBar>
-    )
-}
+    );
+};
 
 export { NavBar };

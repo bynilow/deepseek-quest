@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 const NavBar = styled.div`
     position: fixed;
@@ -12,6 +12,6 @@ const NavBar = styled.div`
     gap: 16px;
     border-radius: 1000px;
     z-index: 11;
-`
+`;
 
 export { NavBar };

@@ -1,10 +1,15 @@
-import { ButtonHTMLAttributes, ChangeEvent, InputHTMLAttributes, MouseEvent, useEffect, useState } from "react";
+import {
+    ButtonHTMLAttributes,
+    ChangeEvent,
+    InputHTMLAttributes,
+    MouseEvent,
+    useEffect,
+    useState,
+} from 'react';
 import * as S from './Form.styles';
 
 const Button = (props: ButtonHTMLAttributes<HTMLButtonElement>) => {
-    return <S.Button {...props}>
-        {props.children}
-    </S.Button>
+    return <S.Button {...props}>{props.children}</S.Button>;
 };
 
 interface SwitchButtonProps {
@@ -12,10 +17,16 @@ interface SwitchButtonProps {
     icon?: string;
 }
 
-const SwitchButton = ({ isActive, icon, ...props }: ButtonHTMLAttributes<HTMLButtonElement> & SwitchButtonProps) => {
-    return <S.SwitchButton $isActive={isActive} {...props}>
-        {icon ? <S.Icon src={icon} /> : props.children}
-    </S.SwitchButton>
+const SwitchButton = ({
+    isActive,
+    icon,
+    ...props
+}: ButtonHTMLAttributes<HTMLButtonElement> & SwitchButtonProps) => {
+    return (
+        <S.SwitchButton $isActive={isActive} {...props}>
+            {icon ? <S.Icon src={icon} /> : props.children}
+        </S.SwitchButton>
+    );
 };
 
 const Input = (props: InputHTMLAttributes<HTMLInputElement>) => {
@@ -27,16 +38,14 @@ const Input = (props: InputHTMLAttributes<HTMLInputElement>) => {
         if (props.onChange) {
             props.onChange(event);
         }
-    }
+    };
 
     useEffect(() => {
         setInnerValue(props.value?.toString() || '');
     }, [props.value]);
 
-    return <S.Input {...props} value={value} onChange={handleChange}>
-
-    </S.Input>
-}
+    return <S.Input {...props} value={value} onChange={handleChange}></S.Input>;
+};
 
 interface SelectProps {
     values: string[];
@@ -63,42 +72,45 @@ const Select = ({ values, value, onChange, placeholder, name }: SelectProps) => 
         onChange({
             target: {
                 name,
-                value: selectedValue
-            }
+                value: selectedValue,
+            },
         });
         setIsDropdownOpened(false);
-    }
+    };
 
     return (
         <>
             {isDropdownOpened && (
                 <S.CloseDropdownBackground onClick={() => setIsDropdownOpened(false)} />
             )}
-            <S.Select $isDropdownOpened={isDropdownOpened} onClick={() => setIsDropdownOpened(prevValue => !prevValue)}>
+            <S.Select
+                $isDropdownOpened={isDropdownOpened}
+                onClick={() => setIsDropdownOpened((prevValue) => !prevValue)}
+            >
                 {innerValue || <S.SelectPlaceholder>{placeholder}</S.SelectPlaceholder>}
-                {
-                    isDropdownOpened && (
-                        <S.Dropdown>
-                            {values.map(iterValue => <Button key={iterValue} onClick={(event) => handleChange(event, iterValue)}>{iterValue}</Button>)}
-                        </S.Dropdown>
-                    )
-                }
+                {isDropdownOpened && (
+                    <S.Dropdown>
+                        {values.map((iterValue) => (
+                            <Button
+                                key={iterValue}
+                                onClick={(event) => handleChange(event, iterValue)}
+                            >
+                                {iterValue}
+                            </Button>
+                        ))}
+                    </S.Dropdown>
+                )}
             </S.Select>
         </>
-    )
-}
+    );
+};
 
 interface TitleProps {
     children: React.ReactElement | string;
 }
 
 const Title = ({ children }: TitleProps) => {
-
-    return (
-        <S.Title>
-            {children}
-        </S.Title>
-    )
-}
+    return <S.Title>{children}</S.Title>;
+};
 
 export { Button, Input, Select, SwitchButton, Title };

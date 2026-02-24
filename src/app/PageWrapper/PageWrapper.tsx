@@ -7,7 +7,6 @@ interface Props {
 }
 
 const PageWrapper = ({ children }: Props) => {
-
     return (
         <>
             <S.globalStyles />
@@ -17,7 +16,7 @@ const PageWrapper = ({ children }: Props) => {
                 {children}
             </S.Wrapper>
         </>
-    )
+    );
 };
 
 export { PageWrapper };

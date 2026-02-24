@@ -1,11 +1,11 @@
-import styled, { keyframes } from "styled-components";
+import styled, { keyframes } from 'styled-components';
 
 const LoaderWrapper = styled.div`
     display: flex;
     gap: 8px;
     justify-content: center;
     align-items: center;
-`
+`;
 
 const rotate = keyframes`
     0% {
@@ -17,8 +17,7 @@ const rotate = keyframes`
     100%{
         transform: translateY(0);
     }
-`
-
+`;
 
 const Dot = styled.div<{ $delay: number }>`
     width: 10px;

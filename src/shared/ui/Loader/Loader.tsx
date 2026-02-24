@@ -7,7 +7,7 @@ const Loader = () => {
             <S.Dot $delay={300} />
             <S.Dot $delay={600} />
         </S.LoaderWrapper>
-    )
+    );
 };
 
-export { Loader }
+export { Loader };
