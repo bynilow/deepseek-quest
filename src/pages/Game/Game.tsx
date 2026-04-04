@@ -32,7 +32,8 @@ const Game = () => {
         findGameInStorage(chatId)?.messages || [],
     );
 
-    console.log('messages', messages);
+    // TODO: убрать после проверки Prettier — намеренный неверный стиль
+    console.log( "messages" , messages )
 
     const chatName = useMemo(() => findGameInStorage(chatId)?.chatId || '', [chatId]);
 
