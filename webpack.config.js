@@ -10,16 +10,7 @@ module.exports = {
         rules: [
             {
                 test: /\.tsx?$/,
-                use: [
-                    {
-                        options: {
-                            eslintPath: require.resolve('eslint'),
-
-                        },
-                        loader: require.resolve('eslint-loader'),
-                    },
-                    'ts-loader'
-                ],
+                use: ['ts-loader'],
                 exclude: /node_modules/,
             },
             {
