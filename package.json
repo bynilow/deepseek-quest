@@ -8,7 +8,8 @@
     "build": "webpack --mode production --env='.env'",
     "lint": "eslint --ext .ts,.tsx src",
     "lint:fix": "npm run lint -- --fix",
-    "prettier": "prettier --write src/**/*.{ts,tsx}"
+    "prettier": "prettier --write src/**/*.{ts,tsx}",
+    "prettier:check": "prettier --check src/**/*.{ts,tsx}"
   },
   "keywords": [],
   "author": "",
