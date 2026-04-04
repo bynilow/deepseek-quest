@@ -32,7 +32,10 @@ const Game = () => {
         findGameInStorage(chatId)?.messages || [],
     );
 
-    console.log('messages', messages);
+    // TODO: убрать после проверки джобы линтера — намеренный no-unused-vars
+    const eslintCiTestUnused = true;
+
+    console.log('messages', messages)
 
     const chatName = useMemo(() => findGameInStorage(chatId)?.chatId || '', [chatId]);
 
